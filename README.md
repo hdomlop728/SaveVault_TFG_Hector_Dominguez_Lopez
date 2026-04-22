@@ -223,7 +223,6 @@ Se dispara automáticamente en cada push a `main`.
 | ... | (ver `savevault/settings/base.py o /ayuda/ en la app desplegada`) |
 
 ---
-
 ## Notas de Seguridad
 
 - Validación de archivos guardados por extensión por plataforma
@@ -234,3 +233,5 @@ Se dispara automáticamente en cada push a `main`.
 - Autenticación con usuario custom (no User genérico)
 - Middleware que bloquea usuarios baneados
 - Production mode: HTTPS obligatorio, SameSite cookies, SecurityMiddleware
+
+
