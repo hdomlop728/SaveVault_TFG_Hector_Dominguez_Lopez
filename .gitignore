@@ -1,0 +1,54 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+# Carpetas de caché de bytecode generadas automáticamente por Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# ── Django ────────────────────────────────────────────────────────────────────
+# Archivos de log generados en tiempo de ejecución
+*.log
+# Configuración local que sobreescribe settings (no debe compartirse)
+local_settings.py
+# Base de datos SQLite local (solo para desarrollo)
+db.sqlite3
+db.sqlite3-journal
+# Archivos subidos por usuarios — nunca versionar contenido de media
+# El .gitkeep mantiene la carpeta vacía en el repositorio para que Django
+# pueda escribir en ella sin tener que crearla desde cero
+media/*
+!media/.gitkeep
+# Archivos estáticos recopilados con collectstatic (se generan en despliegue)
+staticfiles/
+
+# ── Entorno ───────────────────────────────────────────────────────────────────
+# Variables de entorno con credenciales — nunca versionar
+.env
+# Entornos virtuales de Python
+.venv
+venv/
+env/
+
+# ── Docker ────────────────────────────────────────────────────────────────────
+.docker/
+
+# ── IDE ───────────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ── Sistema operativo ─────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+
+certbot/
+certbot/conf/
+certbot/conf/accounts
+notas/

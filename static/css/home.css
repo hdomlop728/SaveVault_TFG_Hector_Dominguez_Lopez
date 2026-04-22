@@ -1,0 +1,36 @@
+.sv-era-block { margin-bottom: 1.5rem; }
+.sv-era-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .7rem;
+  color: var(--sv-accent, #00d4ff);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(0,212,255,.2);
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+.sv-plat-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.sv-platform-tile {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  background: var(--sv-surface-2, #1a1a2e);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 6px;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--sv-text, #e0e0e0);
+  text-decoration: none;
+  transition: all .15s;
+  white-space: nowrap;
+}
+.sv-platform-tile:hover {
+  border-color: var(--sv-accent, #00d4ff);
+  color: var(--sv-accent, #00d4ff);
+  background: rgba(0,212,255,.07);
+  transform: translateY(-1px);
+}

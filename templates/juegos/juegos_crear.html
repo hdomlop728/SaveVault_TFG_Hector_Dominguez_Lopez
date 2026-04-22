@@ -1,0 +1,147 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Añadir juego{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/juegos_crear.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:720px">
+
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb sv-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+      <li class="breadcrumb-item"><a href="{% url 'juegos:juego_lista' %}">Juegos</a></li>
+      <li class="breadcrumb-item active">Añadir juego</li>
+    </ol>
+  </nav>
+
+  <h1 class="sv-page-title mb-1">Añadir nuevo juego</h1>
+  <p class="text-muted mb-4">Busca cualquier juego — los datos y capturas se importan de IGDB automáticamente.</p>
+
+  {% if errores %}
+  <div class="alert mb-4" style="background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.4);border-radius:8px;padding:14px 18px">
+    <div style="font-weight:700;color:#ff6b6b;margin-bottom:8px">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor, corrige lo siguiente:
+    </div>
+    <ul class="mb-0 ps-3" style="color:#ffaaaa">
+      {% for key, msg in errores.items %}<li>{{ msg }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <form method="post" enctype="multipart/form-data" novalidate id="sv-form">
+    {% csrf_token %}
+    <input type="hidden" name="igdb_id"       id="sv-hidden-igdb">
+    <input type="hidden" name="game_title"     id="sv-hidden-title">
+    <input type="hidden" name="game_platform"  id="sv-hidden-platform">
+
+    {# ── PASO 1 ── #}
+    <div class="sv-form-card mb-4">
+      <div class="sv-form-card-header"><i class="bi bi-search"></i> Paso 1 — Elige el juego</div>
+      <div class="sv-form-card-body">
+
+        <div class="sv-ac-wrap" id="sv-ac-wrap">
+          {# Filtro de plataforma #}
+          <div class="d-flex gap-2 mb-2">
+            <select id="sv-platform-filter" class="form-select" style="max-width:200px;height:42px;font-size:.9rem;">
+              <option value="" disabled {% if not plataforma_previa %}selected{% endif %}>Elige plataforma primero</option>
+              {% for slug, nombre in plataformas %}
+              <option value="{{ slug }}" {% if plataforma_previa == slug %}selected{% endif %}>{{ nombre }}</option>
+              {% endfor %}
+            </select>
+            <input type="text" id="sv-search" class="form-control"
+                   placeholder="Primero selecciona una plataforma…"
+                   autocomplete="off" spellcheck="false" disabled>
+          </div>
+          <div id="sv-suggestions"></div>
+        </div>
+
+        <div id="sv-selected-card">
+          <div class="sv-sel-main">
+            <div id="sv-cover-wrap"></div>
+            <div class="sv-sel-info">
+              <div id="sv-card-title"></div>
+              <div id="sv-card-meta"></div>
+            </div>
+          </div>
+          <div class="sv-screenshots" id="sv-screenshots" style="display:none"></div>
+          <button type="button" id="sv-change-btn">
+            <i class="bi bi-arrow-left-short"></i> Cambiar juego
+          </button>
+        </div>
+
+        {% if errores.juego %}
+        <div class="sv-field-error mt-2">
+          <i class="bi bi-exclamation-circle-fill"></i><span>{{ errores.juego }}</span>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+    {# ── PASO 2 — Archivo de guardado ── #}
+    <div class="sv-form-card mb-4">
+      <div class="sv-form-card-header">
+        <i class="bi bi-floppy"></i> Paso 2 — Archivo de guardado <span class="text-danger">*</span>
+      </div>
+      <div class="sv-form-card-body">
+        <div class="row g-3">
+          <div class="col-md-4">
+            <label class="form-label">Región <span class="text-danger">*</span></label>
+            <select name="region" class="form-select" id="sv-region">
+              <option value="" disabled selected>Selecciona una región</option>
+              <option value="JAP" {% if region_previa == 'JAP' %}selected{% endif %}>Japón</option>
+              <option value="USA" {% if region_previa == 'USA' %}selected{% endif %}>USA</option>
+              <option value="EUR" {% if region_previa == 'EUR' %}selected{% endif %}>Europa</option>
+            </select>
+            {% if errores.region %}
+            <div class="sv-field-error">
+              <i class="bi bi-exclamation-circle-fill"></i><span>{{ errores.region }}</span>
+            </div>
+            {% endif %}
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">Archivo de guardado <span class="text-danger">*</span></label>
+            <input type="file" name="file" class="form-control" id="sv-file">
+            <div id="sv-ext-hint">Selecciona un juego para ver las extensiones válidas.</div>
+            {% if errores.guardado %}
+            <div class="sv-field-error">
+              <i class="bi bi-exclamation-circle-fill"></i><span>{{ errores.guardado }}</span>
+            </div>
+            {% endif %}
+          </div>
+          <div class="col-12">
+            <label class="form-label">Descripción <small style="color:var(--sv-text-muted)">(opcional)</small></label>
+            <input type="text" name="descripcion" class="form-control"
+                   placeholder="ej. Jefe final, 100% completado…"
+                   value="{{ request.POST.descripcion|default:'' }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="d-flex gap-3 flex-wrap">
+      <button type="submit" class="btn sv-btn-primary btn-lg" id="sv-submit" disabled>
+        <i class="bi bi-plus-circle"></i> Crear juego y subir guardado
+      </button>
+      <a href="{% url 'juegos:juego_lista' %}" class="btn btn-outline-secondary btn-lg">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="sv-juegos-crear-data" type="application/json">
+{
+  "EXT": {{ extensiones_json|safe }},
+  "PLATNAME": {{ nombres_plataformas_json|safe }},
+  "prevIgdb": "{{ igdb_id_previo|default:''|escapejs }}",
+  "prevTitle": "{{ titulo_previo|default:''|escapejs }}",
+  "prevPlat": "{{ plataforma_previa|default:''|escapejs }}"
+}
+</script>
+<script src="{% static 'js/juegos_crear.js' %}"></script>
+{% endblock %}
+

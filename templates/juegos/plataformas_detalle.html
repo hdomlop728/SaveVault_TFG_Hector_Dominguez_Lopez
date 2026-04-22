@@ -1,0 +1,117 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ plataforma.nombre }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb sv-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+      <li class="breadcrumb-item active">{{ plataforma.nombre }}</li>
+    </ol>
+  </nav>
+
+  <div class="sv-section-header mb-4">
+    <h1 class="sv-page-title"><i class="bi bi-controller"></i> {{ plataforma.nombre }}</h1>
+    <div class="d-flex align-items-center gap-3">
+      <span class="text-muted">{{ juegos.paginator.count }} juego{{ juegos.paginator.count|pluralize:"s" }}</span>
+      {% if user.is_authenticated %}
+      <a href="{% url 'juegos:juego_crear' %}?plataforma={{ plataforma.slug }}" class="btn sv-btn-primary btn-sm">
+        <i class="bi bi-plus-circle"></i> Añadir juego
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <div class="d-flex align-items-center gap-2 flex-wrap mb-4">
+    <div class="sv-search-wrap d-flex flex-grow-1" style="max-width:400px">
+      <form method="get" class="d-flex w-100">
+        <input id="sv-plataforma-search-input" type="search" name="q" class="form-control" autocomplete="off"
+               style="border-radius:8px 0 0 8px !important;background:var(--sv-surface-2);border-color:var(--sv-border);color:#fff;"
+               placeholder="Buscar en {{ plataforma.nombre }}…"
+               value="{{ busqueda|default:'' }}">
+        <button type="submit" class="btn" style="border-radius:0 8px 8px 0 !important;background:var(--sv-accent);color:#000;border:none;padding:0 14px">
+          <i class="bi bi-search"></i>
+        </button>
+      </form>
+      <div id="sv-plataforma-dropdown" class="sv-search-dropdown"></div>
+    </div>
+    {% if busqueda %}
+    <a href="{% url 'juegos:plataforma_detalle' plataforma.slug %}"
+       style="display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:42px;border-radius:8px;border:1px solid rgba(220,53,69,.4);color:#ff6b6b;font-size:.9rem;text-decoration:none;background:rgba(220,53,69,.08);transition:all .2s;"
+       onmouseover="this.style.background='rgba(220,53,69,.2)';this.style.borderColor='rgba(220,53,69,.7)'"
+       onmouseout="this.style.background='rgba(220,53,69,.08)';this.style.borderColor='rgba(220,53,69,.4)'">
+      <i class="bi bi-x-circle"></i> Limpiar búsqueda
+    </a>
+    {% endif %}
+  </div>
+
+  {% if juegos %}
+  <div class="row g-3">
+    {% for juego in juegos %}
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+      <a href="{{ juego.get_absolute_url }}" class="sv-game-card-link">
+        <div class="sv-game-card">
+          <div class="sv-game-cover">
+            {% if juego.portada_url %}
+            <img src="{{ juego.portada_url }}" alt="{{ juego.titulo }}" class="img-fluid">
+            {% else %}
+            <div class="sv-no-cover"><i class="bi bi-controller"></i></div>
+            {% endif %}
+          </div>
+          <div class="sv-game-info">
+            <h6 class="sv-game-title">{{ juego.titulo }}</h6>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-5 text-muted">
+    <i class="bi bi-{% if busqueda %}search{% else %}inbox{% endif %} fs-1 d-block mb-3"></i>
+    {% if busqueda %}
+      No se encontraron juegos para "{{ busqueda }}" en {{ plataforma.nombre }}.<br>
+      <a href="{% url 'juegos:plataforma_detalle' plataforma.slug %}" class="btn btn-outline-secondary mt-3">Ver todos</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'juegos:juego_crear' %}?plataforma={{ plataforma.slug }}" class="btn sv-btn-primary mt-3">
+        <i class="bi bi-plus-circle"></i> Añadir juego
+      </a>
+      {% endif %}
+    {% else %}
+      Aún no hay juegos para {{ plataforma.nombre }}.
+    {% if user.is_authenticated %}
+    <br><a href="{% url 'juegos:juego_crear' %}?plataforma={{ plataforma.slug }}" class="btn sv-btn-primary mt-3">Añade el primero</a>
+    {% endif %}
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if juegos.has_other_pages %}
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if juegos.has_previous %}
+      <li class="page-item"><a class="page-link" href="?page={{ juegos.previous_page_number }}">‹</a></li>
+      {% endif %}
+      {% for num in juegos.paginator.page_range %}
+      <li class="page-item {% if juegos.number == num %}active{% endif %}">
+        <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+      </li>
+      {% endfor %}
+      {% if juegos.has_next %}
+      <li class="page-item"><a class="page-link" href="?page={{ juegos.next_page_number }}">›</a></li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+</div>
+
+{% block extra_js %}
+<script>
+window.SAVEVAULT_PLATAFORMA_SLUG = "{{ plataforma.slug|escapejs }}";
+</script>
+<script src="{% static 'js/plataformas_detalle.js' %}"></script>
+{% endblock %}
+{% endblock %}

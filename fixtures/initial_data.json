@@ -1,0 +1,163 @@
+[
+  {
+    "model": "juegos.plataforma",
+    "pk": "NES",
+    "fields": {
+      "nombre": "NES"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "MASTER_SYSTEM",
+    "fields": {
+      "nombre": "Master System"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "GB",
+    "fields": {
+      "nombre": "Game Boy"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "GAME_GEAR",
+    "fields": {
+      "nombre": "Game Gear"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "SNES",
+    "fields": {
+      "nombre": "SNES"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "MEGADRIVE",
+    "fields": {
+      "nombre": "Megadrive"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "PS1",
+    "fields": {
+      "nombre": "PlayStation 1"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "SEGA_SATURN",
+    "fields": {
+      "nombre": "Sega Saturn"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "N64",
+    "fields": {
+      "nombre": "Nintendo 64"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "GBC",
+    "fields": {
+      "nombre": "Game Boy Color"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "GBA",
+    "fields": {
+      "nombre": "Game Boy Advance"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "GAME_CUBE",
+    "fields": {
+      "nombre": "GameCube"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "PS2",
+    "fields": {
+      "nombre": "PlayStation 2"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "XBOX",
+    "fields": {
+      "nombre": "Xbox"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "XBOX_360",
+    "fields": {
+      "nombre": "Xbox 360"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "PSP",
+    "fields": {
+      "nombre": "PSP"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "PS3",
+    "fields": {
+      "nombre": "PlayStation 3"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "NDS",
+    "fields": {
+      "nombre": "Nintendo DS"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "WII",
+    "fields": {
+      "nombre": "Wii"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "WIIU",
+    "fields": {
+      "nombre": "Wii U"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "NINTENDO_3DS",
+    "fields": {
+      "nombre": "Nintendo 3DS"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "PS4",
+    "fields": {
+      "nombre": "PlayStation 4"
+    }
+  },
+  {
+    "model": "juegos.plataforma",
+    "pk": "XBOX_ONE",
+    "fields": {
+      "nombre": "Xbox One"
+    }
+  }
+]

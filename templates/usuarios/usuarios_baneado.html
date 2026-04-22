@@ -1,0 +1,35 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Cuenta baneada{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/usuarios_baneado.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card border-danger shadow-sm">
+        <div class="card-body">
+          <h1 class="card-title text-danger">Cuenta temporalmente baneada</h1>
+          <p class="lead">Tu cuenta está actualmente suspendida por una semana.</p>
+          <div class="alert alert-warning" role="alert">
+            <strong>Tiempo restante:</strong>
+            <span id="sv-baneo-countdown" data-baneo-hasta="{{ request.user.baneo_hasta|date:'c' }}">{{ tiempo_restante }}</span>
+          </div>
+          <p>Durante este periodo no podrás acceder a otras páginas dentro de SaveVault. Si crees que ha habido un error, contacta con el administrador.</p>
+          <div class="d-flex gap-2 mt-4">
+            <a href="{% url 'usuarios:usuario_salir' %}" class="btn btn-danger btn-baneo">Cerrar sesión</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/usuarios_baneado.js' %}"></script>
+{% endblock %}

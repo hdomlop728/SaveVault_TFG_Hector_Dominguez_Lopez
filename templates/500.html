@@ -1,0 +1,65 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Error del servidor – 500{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6 text-center">
+
+      <style>
+        .sv-error-code {
+          font-family: 'Orbitron', monospace;
+          font-size: clamp(5rem, 20vw, 10rem);
+          font-weight: 900;
+          line-height: 1;
+          color: #ff4757;
+          text-shadow: 0 0 40px #ff475755, 0 0 80px #ff475722;
+          animation: sv-glitch 4s infinite;
+          letter-spacing: -.02em;
+        }
+        .sv-error-icon {
+          font-size: 3rem;
+          color: #ff4757;
+          opacity: .7;
+          animation: sv-pulse 2s ease-in-out infinite;
+        }
+        .sv-error-divider {
+          width: 60px;
+          height: 2px;
+          background: linear-gradient(90deg, transparent, #ff4757, transparent);
+          margin: 24px auto;
+        }
+        @keyframes sv-glitch {
+          0%, 90%, 100% { transform: translate(0); filter: none; }
+          92% { transform: translate(-2px, 1px); filter: hue-rotate(10deg); }
+          94% { transform: translate(2px, -1px); filter: hue-rotate(-10deg); }
+          96% { transform: translate(-1px, 0); }
+        }
+        @keyframes sv-pulse {
+          0%, 100% { opacity: .7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.1); }
+        }
+      </style>
+
+      <div class="sv-error-code mb-2">500</div>
+      <i class="bi bi-cpu sv-error-icon d-block mb-3"></i>
+      <div class="sv-error-divider"></div>
+
+      <h1 class="sv-page-title mb-3" style="font-size:1.6rem">Error del servidor</h1>
+      <p class="text-muted mb-1">Algo ha salido mal en el servidor.</p>
+      <p class="text-muted small mb-5">Estamos trabajando para solucionarlo. Inténtalo de nuevo en unos minutos.</p>
+
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="{% url 'home' %}" class="btn sv-btn-primary">
+          <i class="bi bi-house"></i> Volver al inicio
+        </a>
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+          <i class="bi bi-arrow-left"></i> Volver atrás
+        </a>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

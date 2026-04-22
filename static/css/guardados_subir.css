@@ -1,0 +1,88 @@
+/* ── Errores ── */
+.sv-field-error {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  margin-top: 6px;
+  padding: 8px 12px;
+  background: rgba(220,53,69,.12);
+  border: 1px solid rgba(220,53,69,.35);
+  border-radius: 6px;
+  color: #ff6b6b;
+  font-size: .82rem;
+  line-height: 1.4;
+}
+.sv-field-error i { flex-shrink: 0; margin-top: 1px; }
+.form-control.is-invalid, .form-select.is-invalid {
+  border-color: rgba(220,53,69,.6) !important;
+}
+
+/* ── Secciones del formulario ── */
+.sv-upload-section {
+  background: var(--sv-surface-2, #1a1a2e);
+  border: 1px solid rgba(255,255,255,.07);
+  border-radius: 12px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  transition: border-color .2s;
+}
+.sv-upload-section:focus-within {
+  border-color: rgba(0,212,255,.35);
+}
+.sv-upload-section-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,.03);
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: .78rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--sv-accent, #00d4ff);
+}
+.sv-upload-section-body {
+  padding: 16px;
+}
+
+/* ── Filtro de plataforma ── */
+#filtro-plataforma {
+  background: var(--sv-surface-3, #12122a);
+  border-color: rgba(0,212,255,.25);
+  color: var(--sv-text, #e0e0e0);
+  transition: border-color .2s;
+}
+#filtro-plataforma:focus {
+  border-color: var(--sv-accent, #00d4ff);
+  box-shadow: 0 0 0 3px rgba(0,212,255,.1);
+}
+
+/* ── Info panel ── */
+.sv-game-info-panel {
+  background: rgba(0,212,255,.04);
+  border: 1px solid rgba(0,212,255,.15);
+  border-radius: 8px;
+  padding: 12px 16px;
+  margin-top: 8px;
+}
+.sv-game-info-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 4px 0;
+  font-size: .84rem;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+.sv-game-info-row:last-child { border-bottom: none; }
+.sv-info-label {
+  color: var(--sv-text-muted, #888);
+  min-width: 140px;
+  font-size: .78rem;
+}
+.sv-info-value {
+  color: var(--sv-text, #e0e0e0);
+  font-weight: 500;
+}
+.sv-mono { font-family: 'Share Tech Mono', monospace; color: var(--sv-accent, #00d4ff); }

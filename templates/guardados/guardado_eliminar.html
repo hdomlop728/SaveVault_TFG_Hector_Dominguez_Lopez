@@ -1,0 +1,23 @@
+{% extends "base/base.html" %}
+{% block title %}Eliminar guardado{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:520px">
+  <div class="sv-form-card border-danger">
+    <div class="sv-form-card-body text-center">
+      <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3 d-block"></i>
+      <h2>Eliminar guardado</h2>
+      <p class="text-muted mb-4">¿Seguro que quieres eliminar este archivo de guardado? Esta acción no se puede deshacer.</p>
+      <div class="text-start mb-3">
+        <p class="mb-1"><strong>Juego:</strong> {{ guardado.juego.titulo }}</p>
+        <p class="mb-1"><strong>Región:</strong> {{ guardado.get_region_display }}</p>
+        <p class="mb-0"><strong>Subido por:</strong> {{ guardado.subido_por.username }}</p>
+      </div>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 mb-2">Sí, eliminar guardado</button>
+        <a href="{% url 'juegos:juego_detalle' guardado.juego.pk %}" class="btn btn-outline-secondary w-100">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

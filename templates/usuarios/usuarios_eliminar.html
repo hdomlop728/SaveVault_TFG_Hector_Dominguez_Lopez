@@ -1,0 +1,18 @@
+{% extends "base/base.html" %}
+{% block title %}Eliminar cuenta{% endblock %}
+{% block content %}
+<div class="container py-5" style="max-width:440px">
+  <div class="sv-form-card border-danger">
+    <div class="sv-form-card-body text-center">
+      <i class="bi bi-exclamation-triangle-fill text-danger fs-1 mb-3 d-block"></i>
+      <h2>Eliminar cuenta</h2>
+      <p class="text-muted">Esta acción es irreversible. Tu cuenta y todos los datos asociados serán eliminados permanentemente.</p>
+      <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger w-100 mb-2">Sí, eliminar mi cuenta</button>
+        <a href="{% url 'usuarios:usuario_perfil' user.username %}" class="btn btn-outline-secondary w-100">Cancelar</a>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

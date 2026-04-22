@@ -1,0 +1,68 @@
+{% extends "base/base.html" %}
+{% block title %}Búsqueda: {{ query }}{% endblock %}
+{% block content %}
+<div class="container py-4">
+  <div class="sv-section-header mb-4">
+    <h1 class="sv-page-title">
+      {% if query %}
+        Resultados para <span class="sv-gradient-text">"{{ query }}"</span>
+      {% else %}
+        Buscar juegos
+      {% endif %}
+    </h1>
+    {% if juegos %}
+    <span class="text-muted">{{ juegos|length }} result{{ juegos|length|pluralize }}</span>
+    {% endif %}
+  </div>
+
+  <!-- Formulario de búsqueda -->
+  <form method="get" class="mb-4" style="max-width:480px">
+    <div class="input-group sv-search-group">
+      <input class="form-control sv-search-input" type="search" name="q"
+             value="{{ query }}" placeholder="Buscar por título, desarrollador, plataforma...">
+      <button class="btn sv-search-btn" type="submit"><i class="bi bi-search"></i> Buscar</button>
+    </div>
+  </form>
+
+  {% if query %}
+    {% if juegos %}
+    <div class="row g-3">
+      {% for juego in juegos %}
+      <div class="col-6 col-sm-4 col-md-3 col-xl-2">
+        <a href="{{ juego.get_absolute_url }}" class="sv-game-card-link">
+          <div class="sv-game-card">
+            <div class="sv-game-cover">
+              
+              {% if cover %}
+              <img src="{{ cover.image.url }}" alt="{{ juego.titulo }}" class="img-fluid">
+              {% else %}
+              <div class="sv-no-cover"><i class="bi bi-controller"></i></div>
+              {% endif %}
+              {% endwith %}
+              <div class="sv-game-overlay">
+                <span class="sv-platform-badge">{{ juego.plataforma.nombre }}</span>
+              </div>
+            </div>
+            <div class="sv-game-info">
+              <h6 class="sv-game-title">{{ juego.titulo }}</h6>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5 text-muted">
+      <i class="bi bi-search fs-1 d-block mb-3"></i>
+      No se encontraron juegos para <strong>"{{ query }}"</strong>.
+      {% if user.is_authenticated %}
+      <br>
+      <a href="{% url 'juegos:juego_crear' %}" class="btn sv-btn-primary mt-3">
+        <i class="bi bi-plus-circle"></i> Añadir este juego
+      </a>
+      {% endif %}
+    </div>
+    {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,286 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Ayuda{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/ayuda.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Hero: encabezado principal -->
+  <div class="sv-help-hero mb-5">
+    <div class="sv-help-subtitle"><i class="bi bi-question-circle me-2"></i>Centro de ayuda</div>
+    <h1 class="sv-page-title" style="font-size:2rem">¿En qué podemos ayudarte?</h1>
+    <p class="text-muted">Todo lo que necesitas saber para usar SaveVault.</p>
+  </div>
+
+  <!-- Índice móvil desplegable -->
+  <div class="sv-help-nav-mobile">
+    <button class="sv-help-nav-mobile-toggle" id="sv-help-toggle">
+      <span><i class="bi bi-list-ul me-2" style="color:var(--sv-accent)"></i>Contenido</span>
+      <i class="bi bi-chevron-down chevron"></i>
+    </button>
+    <div class="sv-help-nav-mobile-menu" id="sv-help-menu">
+      <a href="#cuenta" onclick="cerrarMenu()"><i class="bi bi-person-circle"></i> Cuenta</a>
+      <a href="#juegos" onclick="cerrarMenu()"><i class="bi bi-controller"></i> Juegos</a>
+      <a href="#guardados" onclick="cerrarMenu()"><i class="bi bi-floppy"></i> Guardados</a>
+      <a href="#reportes" onclick="cerrarMenu()"><i class="bi bi-flag"></i> Reportes</a>
+      <a href="#faq" onclick="cerrarMenu()"><i class="bi bi-chat-dots"></i> Preguntas frecuentes</a>
+      <a href="#formatos" onclick="cerrarMenu()"><i class="bi bi-file-earmark-code"></i> Formatos por plataforma</a>
+    </div>
+  </div>
+
+  <div class="row g-4">
+
+    <!-- Índice lateral -->
+    <div class="col-lg-3 d-none d-lg-block">
+      <nav class="sv-help-nav">
+        <div class="sv-help-nav-title">Contenido</div>
+        <a href="#cuenta"><i class="bi bi-person-circle"></i> Cuenta</a>
+        <a href="#juegos"><i class="bi bi-controller"></i> Juegos</a>
+        <a href="#guardados"><i class="bi bi-floppy"></i> Guardados</a>
+        <a href="#reportes"><i class="bi bi-flag"></i> Reportes y baneos</a>
+        <a href="#faq"><i class="bi bi-chat-dots"></i> Preguntas frecuentes</a>
+        <a href="#formatos"><i class="bi bi-file-earmark-code"></i> Formatos por plataforma</a>
+      </nav>
+    </div>
+
+    <!-- Contenido principal -->
+    <div class="col-lg-9">
+
+      <!-- ── Cuenta ── -->
+      <section id="cuenta" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-person-circle"></i></div>
+          <h2>Cuenta de usuario</h2>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Registrarse</h5>
+          <ol class="sv-help-steps">
+            <li>Haz clic en <strong>Registrarse</strong> en la esquina superior derecha de la barra de navegación.</li>
+            <li>Rellena el formulario: nombre de usuario, correo electrónico, contraseña y opcionalmente una biografía y avatar.</li>
+            <li>Pulsa <strong>Crear cuenta</strong>. Ya puedes iniciar sesión.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Iniciar sesión</h5>
+          <ol class="sv-help-steps">
+            <li>Haz clic en <strong>Acceder</strong> en la barra de navegación superior.</li>
+            <li>Introduce tu nombre de usuario y contraseña y pulsa <strong>Iniciar sesión</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Editar tu perfil</h5>
+          <ol class="sv-help-steps">
+            <li>Haz clic en tu nombre de usuario en la barra superior para desplegar el menú.</li>
+            <li>Selecciona <strong>Editar perfil</strong>.</li>
+            <li>Modifica los campos que desees y pulsa <strong>Guardar cambios</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Ver tu perfil</h5>
+          <ol class="sv-help-steps">
+            <li>Haz clic en tu nombre de usuario en la barra superior.</li>
+            <li>Selecciona <strong>Perfil</strong> en el menú desplegable.</li>
+            <li>Desde tu perfil puedes ver tus guardados subidos y acceder a editar perfil o eliminar cuenta.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Eliminar cuenta</h5>
+          <ol class="sv-help-steps">
+            <li>Ve a tu perfil haciendo clic en tu nombre de usuario → <strong>Perfil</strong>.</li>
+            <li>En tu perfil encontrarás el botón <strong>Eliminar cuenta</strong>.</li>
+            <li>Confirma la acción — esta operación es irreversible y eliminará tu cuenta y todos tus datos permanentemente.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ── Juegos ── -->
+      <section id="juegos" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-controller"></i></div>
+          <h2>Juegos</h2>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Buscar un juego</h5>
+          <ol class="sv-help-steps">
+            <li>Usa la barra de búsqueda de la parte superior del navbar — busca por título, desarrollador o plataforma.</li>
+            <li>También puedes ir a <strong>Todos los juegos</strong> desde el navbar y usar el filtro de plataforma para reducir los resultados.</li>
+            <li>Haz clic en la portada o el título del juego para abrir su página.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Navegar por plataforma</h5>
+          <ol class="sv-help-steps">
+            <li>En el navbar, haz clic en <strong>Plataformas</strong> para desplegar el menú con todas las consolas disponibles.</li>
+            <li>Selecciona una plataforma para ver todos sus juegos.</li>
+            <li>Desde la página de la plataforma puedes añadir un juego directamente con el botón <strong>Añadir juego</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Añadir un juego y subir un guardado</h5>
+          <ol class="sv-help-steps">
+            <li>Debes tener sesión iniciada. Ve a <strong>Todos los juegos</strong> y haz clic en <strong>Añadir juego</strong>, o hazlo desde la página de una plataforma.</li>
+            <li><strong>Paso 1 — Elige el juego:</strong> selecciona la plataforma en el desplegable y escribe el nombre del juego en el buscador. Los datos (portada, descripción, desarrollador) se importan automáticamente desde IGDB.</li>
+            <li>Haz clic en el resultado correcto para seleccionarlo.</li>
+            <li><strong>Paso 2 — Archivo de guardado:</strong> selecciona la región (JAP, USA o EUR), sube el archivo de guardado y añade una descripción opcional.</li>
+            <li>Pulsa <strong>Crear juego y subir guardado</strong>. El juego y tu primer guardado se crean a la vez.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Comentar en un juego</h5>
+          <ol class="sv-help-steps">
+            <li>Abre la página del juego y desplázate hasta la sección <strong>Comentarios</strong>.</li>
+            <li>Escribe tu comentario y pulsa <strong>Publicar comentario</strong>. Debes tener sesión iniciada.</li>
+            <li>Puedes eliminar tus propios comentarios con el icono de papelera.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ── Guardados ── -->
+      <section id="guardados" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-floppy"></i></div>
+          <h2>Archivos de guardado</h2>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Subir un guardado a un juego existente</h5>
+          <ol class="sv-help-steps">
+            <li>Debes tener sesión iniciada. Abre la página del juego.</li>
+            <li>Haz clic en <strong>Subir guardado para este juego</strong>.</li>
+            <li>Selecciona la región (JAP, USA o EUR) y sube tu archivo. Consulta la sección de formatos al final de esta página para saber qué extensiones acepta cada plataforma.</li>
+            <li>Añade una descripción opcional (ej: "Final del juego", "100% completado") y pulsa <strong>Subir guardado</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Descargar un guardado</h5>
+          <ol class="sv-help-steps">
+            <li>Abre la página del juego que te interesa.</li>
+            <li>Los guardados están organizados por región (JAP, USA, EUR). Localiza el que quieres y haz clic en <strong>Descargar</strong>.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Eliminar un guardado</h5>
+          <ol class="sv-help-steps">
+            <li>Solo puedes eliminar los guardados que tú has subido.</li>
+            <li>En la página del juego, localiza tu guardado y haz clic en el icono de papelera <i class="bi bi-trash text-danger"></i>.</li>
+            <li>Confirma la eliminación — esta acción es irreversible.</li>
+          </ol>
+        </div>
+      </section>
+
+      <!-- ── Reportes ── -->
+      <section id="reportes" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-flag"></i></div>
+          <h2>Reportes y baneos</h2>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Reportar un guardado</h5>
+          <p class="text-muted mb-3" style="font-size:.9rem">Si encuentras un guardado que no funciona, está mal clasificado o parece sospechoso, puedes reportarlo para que el administrador lo revise.</p>
+          <ol class="sv-help-steps">
+            <li>Debes tener sesión iniciada. Abre la página del juego con el guardado problemático.</li>
+            <li>Haz clic en el icono de bandera <i class="bi bi-flag text-warning"></i> junto al guardado.</li>
+            <li>Selecciona el motivo: <em>archivo roto</em>, <em>juego incorrecto</em>, <em>sospechoso/malware</em>, <em>región incorrecta</em> u <em>otro</em>.</li>
+            <li>Añade un detalle adicional si lo consideras útil y envía el reporte.</li>
+          </ol>
+          <div class="mt-3 p-3 rounded" style="background:rgba(255,170,0,.08);border:1px solid rgba(255,170,0,.2);font-size:.84rem;color:#ffcc55">
+            <i class="bi bi-info-circle me-2"></i> Solo puedes reportar una vez el mismo guardado. El administrador revisará el reporte y tomará las medidas oportunas.
+          </div>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>Reportar un comentario</h5>
+          <p class="text-muted mb-3" style="font-size:.9rem">Si ves comentarios ofensivos, spam o que incumplen las normas, también puedes reportarlos para que el equipo de moderación actúe.</p>
+          <ol class="sv-help-steps">
+            <li>Inicia sesión y localiza el comentario que quieres reportar en la página del juego.</li>
+            <li>Haz clic en el icono de bandera <i class="bi bi-flag text-warning"></i> junto al comentario.</li>
+            <li>Elige el motivo del reporte y añade una breve explicación si lo deseas.</li>
+            <li>Envía el reporte. El comentario será revisado por el moderador.</li>
+          </ol>
+        </div>
+
+        <div class="sv-help-subsection">
+          <h5>¿Qué pasa después de un reporte?</h5>
+          <p class="text-muted mb-3" style="font-size:.9rem">El equipo de moderación revisa los reportes y puede suspender o banear cuentas si detecta abuso, spam, contenido inapropiado o violaciones de las normas.</p>
+          <ol class="sv-help-steps">
+            <li>Los reportes se envían al administrador o moderador responsable.</li>
+            <li>Si el reporte es válido, el moderador puede eliminar el contenido problemático y advertir al usuario.</li>
+            <li>En casos graves o repetidos, la cuenta puede ser suspendida o baneada.</li>
+          </ol>
+          <div class="mt-3 p-3 rounded" style="background:rgba(220,53,69,.08);border:1px solid rgba(220,53,69,.2);font-size:.84rem;color:#dc3545">
+            <i class="bi bi-shield-exclamation me-2"></i> El uso indebido de reportes también puede ser revisado. Usa esta función solo cuando un comentario o guardado realmente viole las normas.
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FAQ ── -->
+      <section id="faq" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-chat-dots"></i></div>
+          <h2>Preguntas frecuentes</h2>
+        </div>
+
+        {% for pregunta, respuesta in faq %}
+        <div class="sv-faq-item">
+          <div class="sv-faq-question" onclick="toggleFaq(this.parentElement)">
+            <span>{{ pregunta }}</span>
+            <i class="bi bi-chevron-down"></i>
+          </div>
+          <div class="sv-faq-answer">{{ respuesta }}</div>
+        </div>
+        {% endfor %}
+      </section>
+
+      <!-- ── Formatos ── -->
+      <section id="formatos" class="sv-help-section">
+        <div class="sv-help-section-header">
+          <div class="sv-help-section-icon"><i class="bi bi-file-earmark-code"></i></div>
+          <h2>Formatos de archivo por plataforma</h2>
+        </div>
+
+        <p class="text-muted mb-4" style="font-size:.87rem">Cada plataforma acepta únicamente los formatos compatibles con sus emuladores. Asegúrate de subir el formato correcto para que el guardado funcione.</p>
+
+        <div style="overflow-x:auto">
+          <table class="sv-formats-table">
+            <thead>
+              <tr>
+                <th>Plataforma</th>
+                <th>Extensiones aceptadas</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for plataforma, extensiones in formatos_plataforma %}
+              <tr>
+                <td>{{ plataforma }}</td>
+                <td>{% for ext in extensiones %}<span class="sv-ext-badge">{{ ext }}</span>{% endfor %}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/ayuda.js' %}"></script>
+{% endblock %}

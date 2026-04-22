@@ -1,0 +1,135 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Todos los juegos{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <div class="sv-section-header mb-4">
+    <h1 class="sv-page-title">Todos los juegos</h1>
+    {% if user.is_authenticated %}
+    <a href="{% url 'juegos:juego_crear' %}" class="btn sv-btn-primary">
+      <i class="bi bi-plus-circle"></i> Añadir juego
+    </a>
+    {% endif %}
+  </div>
+
+  <!-- Barra de búsqueda -->
+  <form method="get" class="mb-4">
+    <div class="d-flex align-items-center gap-2 flex-wrap">
+      <!-- Buscador -->
+      <div class="sv-search-wrap d-flex flex-grow-1" style="max-width:400px">
+        <input id="busqueda-lista-input" type="search" name="q" class="form-control" autocomplete="off"
+               style="border-radius:8px 0 0 8px !important;background:var(--sv-surface-2);border-color:var(--sv-border);color:#fff;"
+               placeholder="Buscar título o desarrollador…"
+               value="{{ busqueda|default:'' }}">
+        <button type="submit" class="btn"
+                style="border-radius:0 8px 8px 0 !important;background:var(--sv-accent);color:#000;border:none;padding:0 14px">
+          <i class="bi bi-search"></i>
+        </button>
+        <div id="busqueda-lista-dropdown" class="sv-search-dropdown"></div>
+      </div>
+      <!-- Filtro plataforma -->
+      <select name="plataforma" onchange="this.form.submit()"
+              style="max-width:200px;background:var(--sv-surface-2);border:1px solid var(--sv-border);
+                     color:#fff;border-radius:8px;padding:6px 14px;cursor:pointer;height:42px;
+                     font-size:.9rem;transition:border-color .2s;outline:none;">
+        <option value="">Todas las plataformas</option>
+        {% for p in plataformas %}
+        <option value="{{ p.slug }}" {% if plataforma_activa == p.slug %}selected{% endif %}>{{ p.nombre }}</option>
+        {% endfor %}
+      </select>
+      <!-- Limpiar -->
+      {% if busqueda or plataforma_activa %}
+      <a href="{% url 'juegos:juego_lista' %}"
+         style="display:inline-flex;align-items:center;gap:5px;padding:0 14px;height:42px;
+                border-radius:8px;border:1px solid rgba(220,53,69,.4);
+                color:#ff6b6b;font-size:.9rem;text-decoration:none;
+                background:rgba(220,53,69,.08);transition:all .2s;"
+         onmouseover="this.style.background='rgba(220,53,69,.2)';this.style.borderColor='rgba(220,53,69,.7)'"
+         onmouseout="this.style.background='rgba(220,53,69,.08)';this.style.borderColor='rgba(220,53,69,.4)'">
+        <i class="bi bi-x-circle"></i> Limpiar filtros
+      </a>
+      {% endif %}
+      <!-- Contador -->
+      <span style="font-size:.82rem;color:var(--sv-text-muted);font-family:'Share Tech Mono',monospace">
+        {{ page_obj.paginator.count }} juego{{ page_obj.paginator.count|pluralize:"s" }}
+      </span>
+    </div>
+  </form>
+
+    <!-- Cuadrícula de juegos — mosaicos de ancho fijo, se ajustan naturalmente -->
+  {% if juegos %}
+  <div class="row g-3">
+    {% for juego in juegos %}
+    <div class="col-6 col-sm-4 col-md-3 col-lg-2">
+      <a href="{{ juego.get_absolute_url }}" class="sv-game-card-link">
+        <div class="sv-game-card">
+          <div class="sv-game-cover">
+            {% if juego.portada_url %}
+            <img src="{{ juego.portada_url }}" alt="{{ juego.titulo }}" loading="lazy">
+            {% else %}
+            <div class="sv-no-cover"><i class="bi bi-controller"></i></div>
+            {% endif %}
+            <div class="sv-game-overlay">
+              <span class="sv-platform-badge">{{ juego.plataforma.nombre }}</span>
+            </div>
+          </div>
+          <div class="sv-game-info">
+            <h6 class="sv-game-title">{{ juego.titulo }}</h6>
+          </div>
+        </div>
+      </a>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center text-muted py-5">
+    <i class="bi bi-{% if busqueda %}search{% else %}controller{% endif %} fs-1 d-block mb-3"></i>
+    {% if busqueda %}
+      No se encontraron juegos para "{{ busqueda }}".<br>
+      <a href="{% url 'juegos:juego_lista' %}" class="btn btn-outline-secondary mt-3">Ver todos</a>
+      {% if user.is_authenticated %}
+      <a href="{% url 'juegos:juego_crear' %}" class="btn sv-btn-primary mt-3">
+        <i class="bi bi-plus-circle"></i> Añadir juego
+      </a>
+      {% endif %}
+    {% else %}
+      Aún no hay juegos. <a href="{% url 'juegos:juego_crear' %}">¡Sé el primero en añadir uno!</a>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Paginación -->
+  {% if is_paginated %}
+  <nav class="mt-5 d-flex justify-content-center">
+    <ul class="pagination sv-pagination">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?{% if busqueda %}q={{ busqueda }}&{% endif %}{% if plataforma_activa %}plataforma={{ plataforma_activa }}&{% endif %}page={{ page_obj.previous_page_number }}">‹</a>
+      </li>
+      {% endif %}
+      {% for num in page_obj.paginator.page_range %}
+        {% if page_obj.number == num %}
+        <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+        {% elif num >= page_obj.number|add:'-2' and num <= page_obj.number|add:'2' %}
+        <li class="page-item">
+          <a class="page-link" href="?{% if busqueda %}q={{ busqueda }}&{% endif %}{% if plataforma_activa %}plataforma={{ plataforma_activa }}&{% endif %}page={{ num }}">{{ num }}</a>
+        </li>
+        {% endif %}
+      {% endfor %}
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?{% if busqueda %}q={{ busqueda }}&{% endif %}{% if plataforma_activa %}plataforma={{ plataforma_activa }}&{% endif %}page={{ page_obj.next_page_number }}">›</a>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+  {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/juegos_lista.js' %}"></script>
+{% endblock %}

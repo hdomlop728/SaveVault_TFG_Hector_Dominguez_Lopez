@@ -1,0 +1,180 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Inicio{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/home.css' %}">
+{% endblock %}
+
+{% block content %}
+<!-- HERO -->
+<section class="sv-hero">
+  <div class="sv-hero-bg"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center min-vh-50 py-5">
+      <div class="col-lg-7">
+        <div class="sv-hero-badge mb-3">
+          <i class="bi bi-stars"></i> Repositorio Comunitario de Guardados
+        </div>
+        <h1 class="sv-hero-title">
+          Tus guardados.<br>
+          <span class="sv-gradient-text">Preservados para siempre.</span>
+        </h1>
+        <p class="sv-hero-subtitle">
+          Descarga y comparte archivos de guardado para más de 20 plataformas. De NES a PS4.
+        </p>
+        <div class="d-flex gap-3 flex-wrap mt-4">
+          <a href="{% url 'juegos:juego_lista' %}" class="btn sv-btn-primary btn-lg">
+            <i class="bi bi-search"></i> Explorar juegos
+          </a>
+          {% if not user.is_authenticated %}
+          <a href="{% url 'usuarios:usuario_registro' %}" class="btn sv-btn-outline btn-lg">
+            <i class="bi bi-person-plus"></i> Únete
+          </a>
+          {% else %}
+          <a href="{% url 'guardados:guardado_subir' %}" class="btn sv-btn-outline btn-lg">
+            <i class="bi bi-upload"></i> Subir guardado
+          </a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="col-lg-5 d-none d-lg-flex justify-content-center">
+        <div class="sv-hero-console">
+          <div class="sv-console-screen">
+            <div class="sv-scanlines"></div>
+            <div class="sv-screen-content">
+              <div class="sv-pixel-text">DATOS DE GUARDADO</div>
+              <div class="sv-pixel-sub">Datos cargados con exito ✓</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- JUEGOS PRINCIPALES -->
+<section class="py-5">
+  <div class="container">
+    <div class="sv-section-header mb-4">
+      <h2 class="sv-section-title"><i class="bi bi-fire text-danger"></i> Juegos más visitados</h2>
+      <a href="{% url 'juegos:juego_lista' %}" class="sv-section-link">Ver todos <i class="bi bi-arrow-right"></i></a>
+    </div>
+    <div class="row g-4">
+      {% for juego in top_juegos %}
+      <div class="col-6 col-md-4 col-lg-2-4">
+        <a href="{{ juego.get_absolute_url }}" class="sv-game-card-link">
+          <div class="sv-game-card">
+            <div class="sv-game-cover">
+              {% if juego.portada_url %}
+              <img src="{{ juego.portada_url }}" alt="{{ juego.titulo }}" class="img-fluid">
+              {% else %}
+              <div class="sv-no-cover"><i class="bi bi-controller"></i></div>
+              {% endif %}
+              <div class="sv-game-overlay">
+                <span class="sv-platform-badge">{{ juego.plataforma.nombre }}</span>
+              </div>
+            </div>
+            <div class="sv-game-info">
+              <h6 class="sv-game-title">{{ juego.titulo }}</h6>
+              <small class="sv-game-visits"><i class="bi bi-eye"></i> {{ juego.visitas }}</small>
+            </div>
+          </div>
+        </a>
+      </div>
+      {% empty %}
+      <div class="col-12 text-center text-muted py-5">
+        <i class="bi bi-controller fs-1 d-block mb-3"></i>
+        Aún no hay juegos. <a href="{% url 'juegos:juego_crear' %}">¡Sé el primero en añadir uno!</a>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+  <!-- PLATAFORMAS POR ERA -->
+<section class="sv-platforms-section py-5">
+  <div class="container">
+    <div class="sv-section-header mb-4">
+      <h2 class="sv-section-title"><i class="bi bi-grid text-primary"></i> Explorar por plataforma</h2>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 3º Generación (1983–1992)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'NES' or p.slug == 'MASTER_SYSTEM' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 4º Generación (1988–1996)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'SNES' or p.slug == 'MEGADRIVE' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 5º Generación (1994–2002)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'PS1' or p.slug == 'SEGA_SATURN' or p.slug == 'N64' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 6ª Generación (2000–2006)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'PS2' or p.slug == 'GAME_CUBE' or p.slug == 'XBOX' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 7ª Generación (2005–2013)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'PS3' or p.slug == 'WII' or p.slug == 'XBOX_360' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 8ª Generación (2012–2020)</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'PS4' or p.slug == 'WIIU' or p.slug == 'XBOX_ONE' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+    <div class="sv-era-block">
+      <div class="sv-era-label">🕹 Portátiles</div>
+      <div class="sv-plat-grid">
+        {% for p in all_platforms %}{% if p.slug == 'GB' or p.slug == 'GBC' or p.slug == 'GBA' or p.slug == 'GAME_GEAR' or p.slug == 'NDS' or p.slug == 'PSP' or p.slug == 'NINTENDO_3DS' %}<a href="{{ p.get_absolute_url }}" class="sv-platform-tile">{{ p.nombre }}</a>{% endif %}{% endfor %}
+      </div>
+    </div>
+
+  </div>
+</section>
+
+  <!-- ACTIVIDAD RECIENTE -->
+{% if guardados_recientes %}
+<section class="py-5">
+  <div class="container">
+    <div class="sv-section-header mb-4">
+      <h2 class="sv-section-title"><i class="bi bi-clock-history text-success"></i> Subidas recientes</h2>
+    </div>
+    <div class="sv-activity-list">
+      {% for guardado in guardados_recientes %}
+      <div class="sv-activity-item">
+        <div class="sv-activity-icon"><i class="bi bi-file-earmark-arrow-up"></i></div>
+        <div class="sv-activity-body">
+          <a href="{{ guardado.juego.get_absolute_url }}" class="sv-activity-game">{{ guardado.juego.titulo }}</a>
+          <span class="sv-activity-meta">
+            <span class="sv-region-badge sv-region-{{ guardado.region|lower }}">{{ guardado.region }}</span>
+            by <a href="{% url 'usuarios:usuario_perfil' guardado.subido_por.username %}">{{ guardado.subido_por.username }}</a>
+          </span>
+        </div>
+        <div class="sv-activity-platform">{{ guardado.juego.plataforma.nombre }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

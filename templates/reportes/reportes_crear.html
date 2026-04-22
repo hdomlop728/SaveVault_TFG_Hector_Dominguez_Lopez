@@ -1,0 +1,61 @@
+{% extends "base/base.html" %}
+{% block title %}{% if comentario %}Reportar comentario{% else %}Reportar guardado{% endif %}{% endblock %}
+{% block content %}
+<div class="container py-4" style="max-width:540px">
+  {% if comentario %}
+  <h1 class="sv-page-title mb-1">Reportar comentario</h1>
+  <p class="text-muted mb-4">
+    Reportando un comentario en <strong>{{ comentario.juego.titulo }}</strong>
+    por <strong>{{ comentario.usuario.username }}</strong>
+  </p>
+  <div class="sv-form-card mb-3">
+    <div class="sv-form-card-body">
+      <blockquote class="blockquote mb-0">
+        <p>{{ comentario.texto }}</p>
+        <footer class="blockquote-footer">Publicado el {{ comentario.creado_en|date:"d/m/Y" }}</footer>
+      </blockquote>
+    </div>
+  </div>
+  {% else %}
+  <h1 class="sv-page-title mb-1">Reportar archivo de guardado</h1>
+  <p class="text-muted mb-4">
+    Reportando guardado de <strong>{{ guardado.juego.titulo }}</strong>
+    [{{ guardado.region }}] por <strong>{{ guardado.subido_por.username }}</strong>
+  </p>
+  {% endif %}
+  <div class="sv-form-card">
+    <div class="sv-form-card-body">
+      <form method="post" novalidate action="{% if comentario %}{% url 'reportes:reporte_comentario_crear' comentario.pk %}{% else %}{% url 'reportes:reporte_crear' guardado.pk %}{% endif %}">
+        {% csrf_token %}
+        <div class="mb-3">
+          <label class="form-label">Motivo <span class="text-danger">*</span></label>
+          {{ form.motivo }}
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Detalles adicionales</label>
+          {{ form.detalle }}
+        </div>
+        <div class="d-flex gap-3">
+          <button type="submit" class="btn btn-warning btn-send">Enviar reporte</button>
+          {% if comentario %}
+          <a href="{{ comentario.juego.get_absolute_url }}" class="btn btn-outline-secondary btn-cancel">Cancelar</a>
+          {% else %}
+          <a href="{{ guardado.juego.get_absolute_url }}" class="btn btn-outline-secondary btn-cancel">Cancelar</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+  <style>
+    .btn-send:hover {
+      filter: brightness(0.95);
+      transform: translateY(-1px);
+    }
+    .btn-cancel:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: #ced4da;
+    }
+  </style>
+</div>
+{% endblock %}

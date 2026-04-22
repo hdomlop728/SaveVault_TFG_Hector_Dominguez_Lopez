@@ -1,0 +1,75 @@
+{% extends "base/base.html" %}
+{% load static %}
+{% block title %}Editar perfil{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/usuarios_editar.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:600px">
+  <h1 class="sv-page-title mb-4">Editar perfil</h1>
+  <div class="sv-form-card">
+    <div class="sv-form-card-body">
+      {% if form.non_field_errors %}
+      <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+      {% endif %}
+      <form method="post" enctype="multipart/form-data" novalidate id="sv-form-editar">
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3 {% if field.name == 'avatar_crop' %}d-none{% endif %}">
+          {% if field.name == 'avatar' %}
+          <label class="form-label">{{ field.label }}</label>
+          <div class="d-flex align-items-center gap-3 mb-2">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" class="sv-avatar-preview" id="sv-avatar-current">
+            {% else %}
+            <div class="sv-avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+            {% endif %}
+            <div>
+              {{ field }}
+              <small class="text-muted d-block mt-1">Selecciona una imagen para recortarla</small>
+            </div>
+          </div>
+          {% else %}
+          <label class="form-label">{{ field.label }}</label>
+          {{ field }}
+          {% endif %}
+          {% if field.errors %}<div class="text-danger small">{{ field.errors }}</div>{% endif %}
+        </div>
+        {% endfor %}
+        <div class="d-flex gap-3 mt-2">
+          <button type="submit" class="btn sv-btn-primary">Guardar cambios</button>
+          <a href="{% url 'usuarios:usuario_perfil' user.username %}" class="btn btn-outline-secondary">Cancelar</a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Modal de recorte -->
+<div class="modal fade" id="sv-cropper-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><i class="bi bi-crop me-2"></i>Recortar imagen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <img id="sv-crop-image" src="" style="max-width:100%;display:block">
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button type="button" class="btn sv-btn-primary" id="sv-crop-confirm">
+          <i class="bi bi-check-lg me-1"></i>Aplicar recorte
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+<script src="{% static 'js/usuarios_editar.js' %}"></script>
+{% endblock %}

@@ -1,0 +1,59 @@
+# ── Python ────────────────────────────────────────────────────────────────────
+# Carpetas de caché de bytecode — no necesarias en la imagen
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+.eggs/
+
+# ── Django ────────────────────────────────────────────────────────────────────
+# Archivos subidos por usuarios — el contenido no debe ir dentro del contenedor,
+# se sirve desde un volumen externo en producción.
+# El .gitkeep se incluye para que la carpeta media/ exista vacía en la imagen,
+# evitando posibles problemas de permisos al intentar escribir en ella.
+media/*
+!media/.gitkeep
+# Archivos estáticos recopilados — se generan durante el despliegue
+staticfiles/
+# Logs generados en tiempo de ejecución
+*.log
+# Configuración local de desarrollo
+local_settings.py
+# Base de datos SQLite — en producción se usa PostgreSQL
+db.sqlite3
+
+# ── Entornos virtuales ────────────────────────────────────────────────────────
+# No copiar el entorno virtual local — la imagen instala sus propias dependencias
+.venv/
+venv/
+env/
+
+# ── Tests y cobertura ─────────────────────────────────────────────────────────
+.coverage
+htmlcov/
+.pytest_cache/
+
+# ── IDE y sistema operativo ───────────────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# ── Git ───────────────────────────────────────────────────────────────────────
+# El historial de Git no es necesario dentro de la imagen
+.git/
+.gitignore
+
+# ── Variables de entorno ──────────────────────────────────────────────────────
+# Las credenciales se inyectan en tiempo de ejecución, nunca en la imagen
+.env
+
+
+certbot/
+certbot/conf/
+certbot/conf/accounts
+
+notas/

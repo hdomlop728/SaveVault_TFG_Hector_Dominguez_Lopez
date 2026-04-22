@@ -1,0 +1,111 @@
+name: Build and Push Docker Image
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_DB: savevault_test
+          POSTGRES_USER: savevault
+          POSTGRES_PASSWORD: savevault
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        env:
+          DJANGO_SETTINGS_MODULE: savevault.settings.development
+          DB_NAME: savevault_test
+          DB_USER: savevault
+          DB_PASSWORD: savevault
+          DB_HOST: localhost
+          SECRET_KEY: ci-test-secret-key
+        run: python manage.py test --verbosity=2
+
+  build_and_push:
+    name: Build and push Docker image to Docker Hub
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/savevault:latest
+          
+      - name: Build and push nginx image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./nginx
+          file: ./nginx/Dockerfile
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/savevault_nginx:latest
+
+
+  
+  aws:
+    name: Deploy image to aws
+    needs: build_and_push
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    # 1
+    - name: copy docker compose via ssh key  
+      uses: appleboy/scp-action@v0.1.7
+      with:
+        host: ${{ secrets.AWS_HOSTNAME }}
+        username: ${{ secrets.AWS_USERNAME }}
+        port: 22 # ${{ secrets.PORT }}
+        key: ${{ secrets.AWS_PRIVATEKEY }}
+        source: "docker-compose.yml"
+        target: /home/${{ secrets.AWS_USERNAME }}/
+    # 2
+    - name: script deploy docker services 
+      uses: appleboy/ssh-action@v1.0.3
+      with:
+        host: ${{ secrets.AWS_HOSTNAME }}
+        username: ${{ secrets.AWS_USERNAME }}
+        key: ${{ secrets.AWS_PRIVATEKEY }}
+        port: 22  # ${{ secrets.PORT }}
+        script: |
+            sleep 60
+            docker compose down --rmi all
+            docker compose up -d
+  
+
+  

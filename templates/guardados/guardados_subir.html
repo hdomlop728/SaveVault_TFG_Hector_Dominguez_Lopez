@@ -1,0 +1,188 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}Subir guardado{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/guardados_subir.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container py-4" style="max-width:680px">
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb sv-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+      <li class="breadcrumb-item active">Subir guardado</li>
+    </ol>
+  </nav>
+
+  <h1 class="sv-page-title mb-1"><i class="bi bi-floppy me-2"></i>Subir guardado</h1>
+  {% if juego %}
+  <p class="text-muted mb-4">Subiendo guardado de <strong>{{ juego.titulo }}</strong> ({{ juego.plataforma.nombre }})</p>
+  {% else %}
+  <p class="text-muted mb-4">
+    Selecciona un juego y sube tu archivo de guardado.
+    <br><small>¿El juego no está en la lista? <a href="{% url 'juegos:juego_crear' %}">Añádelo aquí</a>.</small>
+  </p>
+  {% endif %}
+
+  {# ── Resumen de errores (todos los errores en un solo lugar) ── #}
+  {% if form.errors %}
+  <div class="alert mb-4" style="background:rgba(220,53,69,.15);border:1px solid rgba(220,53,69,.4);border-radius:8px;padding:14px 18px">
+    <div style="font-weight:700;color:#ff6b6b;margin-bottom:8px">
+      <i class="bi bi-exclamation-triangle-fill me-2"></i>Por favor, corrige los siguientes errores:
+    </div>
+    <ul class="mb-0 ps-3" style="color:#ffaaaa">
+      {% for field in form %}
+        {% for error in field.errors %}
+        <li>{{ error }}</li>
+        {% endfor %}
+      {% endfor %}
+      {% for error in form.non_field_errors %}
+      <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="sv-form-card">
+    <div class="sv-form-card-body">
+      <form method="post" enctype="multipart/form-data" novalidate>
+        {% csrf_token %}
+
+        {% if not juego %}
+        <!-- Sección 1: Juego -->
+        <div class="sv-upload-section">
+          <div class="sv-upload-section-header">
+            <i class="bi bi-controller"></i> Paso 1 — Selecciona el juego
+          </div>
+          <div class="sv-upload-section-body">
+            <label class="form-label small text-muted mb-1">Filtrar por plataforma</label>
+            <select id="filtro-plataforma" class="form-select mb-3">
+              <option value="">Todas las plataformas</option>
+              {% for g in form.juego.field.queryset %}
+              {% ifchanged g.plataforma_id %}
+              <option value="{{ g.plataforma_id }}">{{ g.plataforma.nombre }}</option>
+              {% endifchanged %}
+              {% endfor %}
+            </select>
+            <label class="form-label">Juego <span class="text-danger">*</span></label>
+            {{ form.juego }}
+            {% if form.juego.errors %}
+            <div class="sv-field-error mt-2">
+              <i class="bi bi-exclamation-circle-fill"></i>
+              <span>{% for e in form.juego.errors %}{{ e }}{% endfor %}</span>
+            </div>
+            {% endif %}
+            <div id="game-info-panel" style="display:none">
+              <div class="sv-game-info-panel">
+                <div class="sv-game-info-row">
+                  <span class="sv-info-label"><i class="bi bi-controller"></i> Plataforma</span>
+                  <span id="info-platform" class="sv-info-value">—</span>
+                </div>
+                <div class="sv-game-info-row">
+                  <span class="sv-info-label"><i class="bi bi-building"></i> Desarrollador</span>
+                  <span id="info-developer" class="sv-info-value">—</span>
+                </div>
+                <div class="sv-game-info-row">
+                  <span class="sv-info-label"><i class="bi bi-file-earmark-code"></i> Extensiones válidas</span>
+                  <span id="info-extensions" class="sv-info-value sv-mono">—</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% else %}
+        {{ form.juego }}
+        <div class="sv-upload-section mb-3">
+          <div class="sv-upload-section-header">
+            <i class="bi bi-controller"></i> Juego seleccionado
+          </div>
+          <div class="sv-upload-section-body">
+            <div class="sv-game-info-panel" style="margin-top:0;border:none;padding:0;background:none">
+              <div class="sv-game-info-row">
+                <span class="sv-info-label"><i class="bi bi-controller"></i> Plataforma</span>
+                <span class="sv-info-value">{{ juego.plataforma.nombre }}</span>
+              </div>
+              <div class="sv-game-info-row">
+                <span class="sv-info-label"><i class="bi bi-building"></i> Desarrollador</span>
+                <span class="sv-info-value">{{ juego.desarrollador }}</span>
+              </div>
+              <div class="sv-game-info-row">
+                <span class="sv-info-label"><i class="bi bi-people"></i> Jugadores</span>
+                <span class="sv-info-value">{{ juego.num_jugadores }}</span>
+              </div>
+              <div class="sv-game-info-row">
+                <span class="sv-info-label"><i class="bi bi-file-earmark-code"></i> Extensiones válidas</span>
+                <span id="info-extensions-presel" class="sv-info-value sv-mono" data-platform-id="{{ juego.plataforma_id }}">—</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endif %}
+
+        <!-- Sección 2: Archivo -->
+        <div class="sv-upload-section">
+          <div class="sv-upload-section-header">
+            <i class="bi bi-floppy"></i> Paso 2 — Archivo de guardado
+          </div>
+          <div class="sv-upload-section-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="form-label">Región <span class="text-danger">*</span></label>
+                {{ form.region }}
+                {% if form.region.errors %}
+                <div class="sv-field-error mt-2">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  <span>{% for e in form.region.errors %}{{ e }}{% endfor %}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-md-8">
+                <label class="form-label">Archivo <span class="text-danger">*</span></label>
+                {{ form.archivo }}
+                {% if form.archivo.errors %}
+                <div class="sv-field-error mt-2">
+                  <i class="bi bi-exclamation-circle-fill"></i>
+                  <span>{% for e in form.archivo.errors %}{{ e }}{% endfor %}</span>
+                </div>
+                {% endif %}
+              </div>
+              <div class="col-12">
+                <label class="form-label">
+                  Descripción <small style="color:var(--sv-text-muted)">(opcional)</small>
+                </label>
+                {{ form.descripcion }}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 mt-2">
+          <button type="submit" class="btn sv-btn-primary">
+            <i class="bi bi-upload"></i> Subir guardado
+          </button>
+          {% if juego %}
+          <a href="{{ juego.get_absolute_url }}" class="btn btn-outline-secondary">Cancelar</a>
+          {% else %}
+          <a href="{% url 'juegos:juego_lista' %}" class="btn btn-outline-secondary">Cancelar</a>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script id="sv-upload-config" type="application/json">
+{
+  "GAME_DATA": {
+    {% for g in form.juego.field.queryset %}"{{ g.pk }}": {"plataforma": "{{ g.plataforma.nombre|escapejs }}", "desarrollador": "{{ g.desarrollador|escapejs }}", "jugadores": "{{ g.num_jugadores }}", "plataforma_id": "{{ g.plataforma_id }}"}{% if not forloop.last %},{% endif %}
+    {% endfor %}
+  },
+  "PLATFORM_EXTENSIONS": {{ extensiones_json|default:"{}"|safe }}
+}
+</script>
+<script src="{% static 'js/guardados_subir.js' %}"></script>
+{% endblock %}

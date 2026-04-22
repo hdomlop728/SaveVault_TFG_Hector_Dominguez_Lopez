@@ -1,0 +1,92 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ usuario_perfil.username }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+  <div class="row g-4">
+    <div class="col-md-4 col-lg-3">
+      <div class="sv-profile-card">
+        <div class="sv-profile-avatar">
+          {% if usuario_perfil.avatar %}
+          <img src="{{ usuario_perfil.avatar.url }}" alt="{{ usuario_perfil.username }}">
+          {% else %}
+          <div class="sv-avatar-placeholder"><i class="bi bi-person-fill"></i></div>
+          {% endif %}
+        </div>
+        <h3 class="sv-profile-username">{{ usuario_perfil.username }}</h3>
+        {% if usuario_perfil.get_full_name %}
+        <p class="text-muted small">{{ usuario_perfil.get_full_name }}</p>
+        {% endif %}
+        {% if usuario_perfil.bio %}
+        <p class="sv-profile-bio">{{ usuario_perfil.bio }}</p>
+        {% endif %}
+        <div class="sv-profile-stats">
+          <div class="sv-stat">
+            <span class="sv-stat-value">{{ usuario_perfil.total_contributions }}</span>
+            <span class="sv-stat-label">Guardados subidos</span>
+          </div>
+          <div class="sv-stat">
+            <span class="sv-stat-value">{{ usuario_perfil.date_joined|date:"Y" }}</span>
+            <span class="sv-stat-label">Miembro desde</span>
+          </div>
+        </div>
+        {% if user == usuario_perfil %}
+        <a href="{% url 'usuarios:usuario_editar' %}" class="btn sv-btn-outline w-100 mt-3">
+          <i class="bi bi-pencil"></i> Editar perfil
+        </a>
+        <a href="{% url 'usuarios:usuario_eliminar' %}" class="btn btn-outline-danger w-100 mt-2">
+          <i class="bi bi-trash"></i> Eliminar cuenta
+        </a>
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-md-8 col-lg-9">
+      <h2 class="sv-section-title mb-3">Contribuciones</h2>
+      {% if guardados %}
+      <div class="sv-saves-list">
+        {% for guardado in guardados %}
+        <div class="sv-save-contrib">
+          <div class="sv-save-contrib-game">
+            <a href="{{ guardado.juego.get_absolute_url }}">{{ guardado.juego.titulo }}</a>
+            <span class="sv-platform-badge-sm">{{ guardado.juego.plataforma.nombre }}</span>
+          </div>
+          <span class="sv-region-badge sv-region-{{ guardado.region|lower }}">{{ guardado.region }}</span>
+          <span class="text-muted small">{{ guardado.subido_en|date:"M d, Y" }}</span>
+          <a href="{% url 'guardados:guardado_descargar' guardado.pk %}" class="btn sv-btn-download btn-sm ms-auto">
+            <i class="bi bi-download"></i>
+          </a>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <p class="text-muted">Aún no has subido guardados.</p>
+      {% endif %}
+
+      <!-- Paginación -->
+      {% if guardados.has_other_pages %}
+      <nav class="mt-4">
+        <ul class="pagination justify-content-center">
+          {% if guardados.has_previous %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ guardados.previous_page_number }}">‹</a>
+          </li>
+          {% endif %}
+          {% for num in guardados.paginator.page_range %}
+          <li class="page-item {% if guardados.number == num %}active{% endif %}">
+            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+          </li>
+          {% endfor %}
+          {% if guardados.has_next %}
+          <li class="page-item">
+            <a class="page-link" href="?page={{ guardados.next_page_number }}">›</a>
+          </li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endblock %}

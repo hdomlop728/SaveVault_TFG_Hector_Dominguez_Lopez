@@ -1,0 +1,280 @@
+{% extends "base/base.html" %}
+{% load static %}
+
+{% block title %}{{ juego.titulo }}{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+
+  <!-- Miga de pan -->
+  <nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb sv-breadcrumb">
+      <li class="breadcrumb-item"><a href="{% url 'home' %}">Inicio</a></li>
+      <li class="breadcrumb-item"><a href="{{ juego.plataforma.get_absolute_url }}">{{ juego.plataforma.nombre }}</a></li>
+      <li class="breadcrumb-item active">{{ juego.titulo }}</li>
+    </ol>
+  </nav>
+
+  <!-- Encabezado del juego -->
+  <div class="row g-4 mb-5">
+    <!-- Izquierda: Descripción y detalles -->
+    <div class="col-lg-7">
+      <h1 class="sv-page-title">{{ juego.titulo }}</h1>
+      <div class="d-flex flex-wrap gap-2 mb-3">
+        <span class="sv-tag"><i class="bi bi-controller"></i> {{ juego.plataforma.nombre }}</span>
+        {% if juego.genero %}<span class="sv-tag"><i class="bi bi-tags"></i> {{ juego.genero }}</span>{% endif %}
+        {% if juego.year %}<span class="sv-tag"><i class="bi bi-calendar"></i> {{ juego.year }}</span>{% endif %}
+      </div>
+      <p class="sv-description">{{ juego.descripcion }}</p>
+
+      <div class="sv-info-table mt-4">
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-building"></i> Desarrollador</span>
+          <span class="sv-info-value">{{ juego.desarrollador }}</span>
+        </div>
+        {% if juego.publisher %}
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-briefcase"></i> Publicador</span>
+          <span class="sv-info-value">{{ juego.publisher }}</span>
+        </div>
+        {% endif %}
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-people"></i> Jugadores</span>
+          <span class="sv-info-value">{{ juego.num_jugadores }}</span>
+        </div>
+        {% if juego.genero %}
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-tag"></i> Género</span>
+          <span class="sv-info-value">{{ juego.genero }}</span>
+        </div>
+        {% endif %}
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-eye"></i> Visitas</span>
+          <span class="sv-info-value">{{ juego.visitas }}</span>
+        </div>
+        {% if juego.creado_por %}
+        <div class="sv-info-row">
+          <span class="sv-info-label"><i class="bi bi-person-plus"></i> Añadido por</span>
+          <span class="sv-info-value"><a href="{% url 'usuarios:usuario_perfil' juego.creado_por.username %}">{{ juego.creado_por.username }}</a></span>
+        </div>
+        {% endif %}
+      </div>
+
+      {% if user.is_authenticated %}
+      <a href="{% url 'guardados:guardado_subir_juego' juego.pk %}" class="btn sv-btn-primary mt-4">
+        <i class="bi bi-upload"></i> Subir guardado para este juego
+      </a>
+      {% endif %}
+
+    </div>
+
+    <!-- Derecha: Carrusel de imágenes -->
+    <div class="col-lg-5">
+      {% if juego.portada_url or capturas %}
+      <style>
+        #mediaCarousel {
+          width: 100%;
+          height: 380px;
+          border-radius: 10px;
+          overflow: hidden;
+          background: #0d0d1a;
+          border: 1px solid rgba(255,255,255,.1);
+        }
+        #mediaCarousel .carousel-inner,
+        #mediaCarousel .carousel-item {
+          height: 100%;
+        }
+        #mediaCarousel .carousel-item img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          background: #0d0d1a;
+        }
+        #mediaCarousel .carousel-control-prev,
+        #mediaCarousel .carousel-control-next {
+          width: 42px;
+          height: 42px;
+          top: 50%;
+          transform: translateY(-50%);
+          background: rgba(0,212,255,.85);
+          border-radius: 50%;
+          opacity: 1;
+        }
+        #mediaCarousel .carousel-control-prev { left: 10px; }
+        #mediaCarousel .carousel-control-next { right: 10px; }
+        #mediaCarousel .carousel-control-prev:hover,
+        #mediaCarousel .carousel-control-next:hover {
+          background: rgba(0,212,255,1);
+        }
+        #mediaCarousel .carousel-control-prev-icon,
+        #mediaCarousel .carousel-control-next-icon {
+          width: 18px;
+          height: 18px;
+          filter: invert(0) brightness(0);
+        }
+        #mediaCarousel .carousel-caption {
+          bottom: 8px;
+          padding: 0;
+        }
+      </style>
+      <!-- Lightbox estilo LaunchBox -->
+      <!-- overlay de fondo clicable -->
+      <div id="sv-lightbox-overlay" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,.75);z-index:99999;cursor:zoom-out;"></div>
+      <!-- imagen encima del overlay -->
+      <div id="sv-lightbox" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:100000;pointer-events:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+        <img id="sv-lightbox-img" src="" alt="" style="display:block;width:80vw;height:80vh;object-fit:contain;border-radius:4px;box-shadow:0 0 60px rgba(0,0,0,.8);pointer-events:none;">
+        <span id="sv-lightbox-label" style="color:#00d4ff;font-family:'Share Tech Mono',monospace;font-size:.82rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;background:rgba(0,0,0,.7);padding:5px 14px;border-radius:4px;border:1px solid rgba(0,212,255,.3);pointer-events:none;"></span>
+        <button id="sv-lightbox-close" style="position:fixed;top:18px;right:22px;background:none;border:none;color:#fff;font-size:2rem;cursor:pointer;line-height:1;opacity:.8;pointer-events:all;" title="Cerrar">✕</button>
+        <button id="sv-lightbox-prev" style="position:fixed;left:16px;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(0,212,255,.85);border:none;color:#000;font-size:1.3rem;cursor:pointer;pointer-events:all;display:flex;align-items:center;justify-content:center;font-weight:700;" title="Anterior">&#8249;</button>
+        <button id="sv-lightbox-next" style="position:fixed;right:16px;top:50%;transform:translateY(-50%);width:46px;height:46px;border-radius:50%;background:rgba(0,212,255,.85);border:none;color:#000;font-size:1.3rem;cursor:pointer;pointer-events:all;display:flex;align-items:center;justify-content:center;font-weight:700;" title="Siguiente">&#8250;</button>
+      </div>
+
+      <div id="mediaCarousel" class="carousel slide" data-bs-ride="carousel" data-bs-interval="5000">
+        <div class="carousel-inner">
+          {% if juego.portada_url %}
+          <div class="carousel-item active">
+            <img src="{{ juego.portada_url }}" alt="{{ juego.titulo }}" style="cursor:zoom-in" onclick="abrirLightbox(this.src, 'Portada')">
+            <div class="carousel-caption" style="bottom:12px">
+              <span style="background:rgba(0,0,0,.7);color:#00d4ff;font-family:'Share Tech Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid rgba(0,212,255,.3)">Portada</span>
+            </div>
+          </div>
+          {% endif %}
+          {% for captura in capturas %}
+          <div class="carousel-item {% if not juego.portada_url and forloop.first %}active{% endif %}">
+            <img src="{{ captura.url }}" alt="Captura {{ forloop.counter }}" style="cursor:zoom-in" onclick="abrirLightbox(this.src, 'Captura {{ forloop.counter }}')">
+            <div class="carousel-caption" style="bottom:12px">
+              <span style="background:rgba(0,0,0,.7);color:#00d4ff;font-family:'Share Tech Mono',monospace;font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:4px 10px;border-radius:4px;border:1px solid rgba(0,212,255,.3)">Captura {{ forloop.counter }}</span>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        {% if capturas %}
+        <button class="carousel-control-prev" type="button" data-bs-target="#mediaCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon"></span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#mediaCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon"></span>
+        </button>
+        {% endif %}
+      </div>
+      {% else %}
+      <div class="sv-no-cover-lg">
+        <i class="bi bi-image fs-1"></i>
+        <p>Sin portada</p>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- SAVES BY REGION -->
+  <div class="sv-saves-section">
+    <h2 class="sv-section-title mb-4"><i class="bi bi-floppy"></i> Archivo de guardados</h2>
+
+    {% for region, guardados_region, label in region_saves %}
+    <div class="sv-region-block mb-4" id="region-{{ region|lower }}">
+      <div class="sv-region-header sv-region-{{ region|lower }}">
+        <i class="bi bi-globe"></i> {{ label }} Region
+        <span class="sv-saves-count">{{ guardados_region|length }} guardado{{ guardados_region|length|pluralize:'s' }}</span>
+      </div>
+      {% if guardados_region %}
+      <div class="sv-saves-table">
+        {% for guardado in guardados_region %}
+        <div class="sv-save-row">
+          <div class="sv-save-meta">
+            <span class="sv-save-uploader">
+              <i class="bi bi-person"></i>
+              <a href="{% url 'usuarios:usuario_perfil' guardado.subido_por.username %}">{{ guardado.subido_por.username }}</a>
+            </span>
+            <span class="sv-save-ext text-muted" style="font-family:'Share Tech Mono',monospace;font-size:.78rem">
+              <i class="bi bi-file-earmark"></i> {{ guardado.extension }}
+            </span>
+            {% if guardado.descripcion %}
+            <span class="sv-save-desc">{{ guardado.descripcion }}</span>
+            {% endif %}
+            <span class="sv-save-date text-muted"><i class="bi bi-clock"></i> {{ guardado.subido_en|date:"d/m/Y" }}</span>
+            <span class="sv-save-downloads text-muted"><i class="bi bi-download"></i> {{ guardado.num_descargas }}</span>
+          </div>
+          <div class="sv-save-actions">
+            <a href="{% url 'guardados:guardado_descargar' guardado.pk %}" class="btn sv-btn-download btn-sm">
+              <i class="bi bi-download"></i> Descargar
+            </a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'reportes:reporte_crear' guardado.pk %}" class="btn btn-outline-warning btn-sm" title="Reportar">
+              <i class="bi bi-flag"></i>
+            </a>
+            {% endif %}
+            {% if user == guardado.subido_por or user.is_staff %}
+            <a href="{% url 'guardados:guardado_eliminar' guardado.pk %}" class="btn btn-outline-danger btn-sm">
+              <i class="bi bi-trash"></i>
+            </a>
+            {% endif %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="sv-empty-region">Todavía no hay guardados para esta región.</div>
+      {% endif %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- COMMENTS -->
+  <div class="sv-comments-section mt-5">
+    <h2 class="sv-section-title mb-4"><i class="bi bi-chat-dots"></i> Comentarios <span class="sv-count-badge">{{ comentarios|length }}</span></h2>
+
+    {% if user.is_authenticated %}
+    <div class="sv-comment-form mb-4">
+      <form method="post" action="{{ juego.get_absolute_url }}">
+        {% csrf_token %}
+        <div class="d-flex gap-3">
+          <div class="sv-comment-avatar">
+            {% if user.avatar %}<img src="{{ user.avatar.url }}" alt="">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
+          </div>
+          <div class="flex-grow-1">
+            {{ formulario_comentario.texto }}
+            <button type="submit" class="btn sv-btn-primary btn-sm mt-2">Publicar comentario</button>
+          </div>
+        </div>
+      </form>
+    </div>
+    {% else %}
+    <div class="sv-login-prompt mb-4">
+      <i class="bi bi-lock"></i> <a href="{% url 'usuarios:usuario_acceder' %}">Inicia sesión</a> para dejar un comentario.
+    </div>
+    {% endif %}
+
+    {% for comentario in comentarios %}
+    <div class="sv-comment">
+      <div class="sv-comment-header">
+        <a href="{% url 'usuarios:usuario_perfil' comentario.usuario.username %}" class="sv-comment-author">
+          {% if comentario.usuario.avatar %}<img src="{{ comentario.usuario.avatar.url }}" class="sv-avatar-sm" alt="">{% else %}<i class="bi bi-person-circle"></i>{% endif %}
+          {{ comentario.usuario.username }}
+        </a>
+        <span class="sv-comment-date">{{ comentario.creado_en|date:"d/m/Y" }}</span>
+        {% if user.is_authenticated %}
+        <a href="{% url 'reportes:reporte_comentario_crear' comentario.pk %}" class="btn btn-outline-warning btn-sm ms-auto" title="Reportar comentario">
+          <i class="bi bi-flag"></i>
+        </a>
+        {% endif %}
+        {% if user == comentario.usuario or user.is_staff %}
+        <form method="post" action="{% url 'juegos:comentario_eliminar' comentario.pk %}" class="d-inline ms-2">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Eliminar este comentario?')">
+            <i class="bi bi-trash"></i>
+          </button>
+        </form>
+        {% endif %}
+      </div>
+      <p class="sv-comment-text">{{ comentario.texto }}</p>
+    </div>
+    {% empty %}
+    <p class="text-muted">Aún no hay comentarios. ¡Sé el primero!</p>
+    {% endfor %}
+  </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/juegos_detalle.js' %}"></script>
+{% endblock %}
+{% endblock %}
