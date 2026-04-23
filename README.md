@@ -235,3 +235,4 @@ Se dispara automáticamente en cada push a `main`.
 - Production mode: HTTPS obligatorio, SameSite cookies, SecurityMiddleware
 
 
+
